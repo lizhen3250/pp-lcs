@@ -1,0 +1,221 @@
+﻿
+@{
+    //ViewBag.Title = "PageReview";
+    Layout = null;
+}
+<link rel="stylesheet" href="/vendors/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/vendors/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/vendors/themify-icons/css/themify-icons.css">
+<link rel="stylesheet" href="/vendors/flag-icon-css/css/flag-icon.min.css">
+<link rel="stylesheet" href="/vendors/selectFX/css/cs-skin-elastic.css">
+<link rel="stylesheet" href="/vendors/jqvmap/dist/jqvmap.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
+
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=Afi9aY1Q4NROu9qxuPNl3qY3UrAqacFEr5A2vQPoME7z-0t2yxKHFuIz0G9jE2IQhEm9W-_Yyn63eOQn&currency=USD"></script>
+<script>
+    var data = JSON.parse(localStorage.getItem("SPBView"));
+    var orderDetail = {};
+    function calculateSubtotal(itemDetails) {
+        let subtotal = 0;
+        for (var i = 0; i < itemDetails.length; i++) {
+            subtotal += itemDetails[i].ItemQuantity * itemDetails[i].ItemAmount;
+        }
+        return subtotal;
+    }
+
+    $(document).ready(function () {
+        var subtotal = calculateSubtotal(data.ItemDetails);
+        var str = "";
+        var shippingfee = data.OrderDetail.ShippingFee;
+        var total = parseFloat(subtotal) + parseFloat(shippingfee);
+        for (var i = 0; i < data.ItemDetails.length; i++) {
+            str += "<div class='row'><div class='col-md-11 col-sm-11'><p><label id='itemName" + i + "'>" + data.ItemDetails[i].ItemName + "</label><label id='itemQuantity" + i + "'> × " + data.ItemDetails[i].ItemQuantity + "</label></p></div><div class='col-md-1'><p><label id='itemnAmount" + i + "'>$" + data.ItemDetails[i].ItemAmount + "</label></p></div></div>";
+        }
+
+        $('#itemDetails').append(str);
+        $('#subtotal').text(subtotal);
+        $('#shippingfee').text(shippingfee);
+        $('#total').text(total);
+
+        orderDetail = {
+            "Description": data.OrderDetail.Description,
+            "InvoiceNumber": data.OrderDetail.InvoiceNumber,
+            "ShippingFee": data.OrderDetail.ShippingFee,
+            "SubTotal": $('#subtotal').text(),
+            "Total": $('#total').text()
+        };
+        data.OrderDetail = orderDetail;
+    });
+
+    function createCheckoutPage() {
+        window.open("/PayPalSmartPayment/CheckoutPage?" + data.OrderDetail.InvoiceNumber, "_blank");
+    }
+
+</script>
+
+<div class="container">
+    <h2>Checkout Page</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="inputEmail">Contact Information</label>
+            <input type="text" class="form-control" id="email" placeholder="Email" value="testing@paypal.com" />
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="inputEmail">Shipping address</label>
+                    <input type="text" class="form-control" id="country" placeholder="Country/Region" value="United States"/>
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="first_name" value="Jin" placeholder="First Name" />
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="last_name" value="Li" placeholder="Last Name" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="address" value="11 philidelphia ave" placeholder="Address" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="apartment" placeholder="Apartment, suite, etc(optional)" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="city" value="Los Angeles" placeholder="City" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="state" value="carifornia" placeholder="State" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="zip_code" value="90001" placeholder="Zip code" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" id="phone_number" value="5555555555" placeholder="Phone" />
+                </div>
+            </div>
+            <p></p>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-5">
+            <div id="itemDetails">
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-11">
+                    <p>Subtotal</p>
+                    <p>Shipping Fee</p>
+                </div>
+                <div class="col-md-1">
+                    <p><label>$<span id="subtotal"></span></label></p>
+                    <p><label>$<span id="shippingfee"></span></label></p>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-11">
+                    <p>Total</p>
+                </div>
+                <div class="col-md-1">
+                    <p><label>$<span id="total"></span></label></p>
+                </div>
+            </div>
+            <p>
+                <div id="paypalbutton"></div>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Set up a container element for the button -->
+<script>
+    var contactInformation = {
+        "email": $('#email').val(),
+        "shippingAddress": {
+            "country": $('#country').val(),
+            "firstName": $('#first_name').val(),
+            "lastName": $('#last_name').val(),
+            "address": $('#address').val(),
+            "city": $('#city').val(),
+            "state": $('#state').val(),
+            "zipCode": $('#zip_code').val(),
+            "phoneNumber": $('#phone_number').val(),
+            "apartment": $('#apartment').val(),
+        }
+    };
+    data.ContactInformation = contactInformation;
+
+    paypal.Buttons({
+        style: {
+            layout: data.ButtonStyle.layout,
+            label: data.ButtonStyle.label,
+            color: data.ButtonStyle.color,
+            shape: data.ButtonStyle.shape
+        },
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (datas, actions) => {
+
+            var purchaseUnitRequest = {
+                "OrderDetail": data.OrderDetail,
+                "ContactInformation": data.ContactInformation,
+                "ItemDetails": data.ItemDetails,
+                "IsSPB": true
+            };
+
+            console.log(purchaseUnitRequest);
+
+            return fetch("/PayPalSmartPayment/CreateOrder", {
+                method: "post",
+                body: JSON.stringify({
+                    "purchaseUnitRequest": purchaseUnitRequest
+                }),
+                headers: {
+                    'content-type' : 'application/json'
+                }
+                // use the "body" param to optionally pass additional order information
+                // like product ids or amount
+            }).then(function (res) {
+                return res.json();
+            }).then(function (data) {
+                console.log(data);
+                return data.id;
+            })           
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+            console.log(data);
+            $.ajax({
+                url: '/PayPalSmartPayment/CaptureOrder',
+                method: 'post',
+                data: { "orderId": data.orderID },
+                success: function (res) {
+                    var json = JSON.parse(res);
+                    console.log(json);
+                    if (json.status == 'COMPLETED') {
+                        localStorage.removeItem("SPBView");
+                        window.location.href = "/Home/Success";
+                    }
+                }
+            })           
+        }
+    }).render('#paypalbutton');
+</script>
+

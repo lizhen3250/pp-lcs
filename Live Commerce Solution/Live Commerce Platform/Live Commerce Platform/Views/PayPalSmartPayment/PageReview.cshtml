@@ -1,0 +1,167 @@
+﻿
+@{
+    ViewBag.Title = "PageReview";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+<script>
+    var data = JSON.parse(localStorage.getItem("SPBView"));
+    console.log(data);
+    function calculateSubtotal(itemDetails) {
+        let subtotal = 0;
+        for (var i = 0; i < itemDetails.length; i++) {
+            subtotal += itemDetails[i].ItemQuantity * itemDetails[i].ItemAmount;
+        }
+        return subtotal;
+    }
+
+    $(document).ready(function () {
+        var subtotal = calculateSubtotal(data.ItemDetails);
+        var str = "";
+        var shippingfee = data.OrderDetail.ShippingFee;
+        var total = parseFloat(subtotal) + parseFloat(shippingfee);
+        for (var i = 0; i < data.ItemDetails.length; i++) {
+            str += "<div class='row'><div class='col-md-11 col-sm-11'><p><label id='itemName" + i + "'>" + data.ItemDetails[i].ItemName + "</label><label id='itemQuantity" + i + "'> × " + data.ItemDetails[i].ItemQuantity + "</label></p></div><div class='col-md-1'><p><label id='itemnAmount" + i + "'>$" + data.ItemDetails[i].ItemAmount+"</label></p></div></div>";
+        }
+
+        $('#itemDetails').append(str);
+        $('#subtotal').text(subtotal);
+        $('#shippingfee').text(shippingfee);
+        $('#total').text(total);
+    });
+
+    function createCheckoutPage() {
+        window.open("/PayPalSmartPayment/CheckoutPage?" + data.OrderDetail.InvoiceNumber, "_blank");
+    }
+
+</script>
+
+<div class="container">
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="inputEmail">Contact Information</label>
+            <input type="text" class="form-control" placeholder="Email" />
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="inputEmail">Shipping address</label>
+                    <input type="text" class="form-control" placeholder="Country/Region" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="First Name" />
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Last Name" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" placeholder="Address" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" placeholder="Apartment, suite, etc(optional)" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="City" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="State" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Zip code" />
+                </div>
+            </div>
+            <p></p>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" class="form-control" placeholder="Phone" />
+                </div>
+            </div>
+            <p></p>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-5">
+            <div id="itemDetails">
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-11">
+                    <p>Subtotal</p>
+                    <p>Shipping Fee</p>
+                </div>
+                <div class="col-md-1">
+                    <p><label>$<span id="subtotal"></span></label></p>
+                    <p><label>$<span id="shippingfee"></span></label></p>
+                </div>
+            </div>
+            <hr />           
+            <div class="row">
+                <div class="col-md-11">
+                    <p>Total</p>
+                </div>
+                <div class="col-md-1">
+                    <p><label>$<span  id="total"></span></label></p>
+                </div>
+            </div>          
+            <p>
+                <div id="paypalbutton"></div>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#"><button type="button" class="form-control btn btn-primary" onclick="createCheckoutPage();">Create</button></a>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Set up a container element for the button -->
+<script>
+    paypal.Buttons({
+        style: {
+            layout: data.ButtonStyle.layout,
+            label: data.ButtonStyle.label,
+            color: data.ButtonStyle.color,
+            shape: data.ButtonStyle.shape
+        },
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '77.44' // Can also reference a variable or function
+                    }
+                }]
+            });
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+            return actions.order.capture().then(function (orderData) {
+                // Successful capture! For dev/demo purposes:
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                const transaction = orderData.purchase_units[0].payments.captures[0];
+                alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                // When ready to go live, remove the alert and show a success message within this page. For example:
+                // const element = document.getElementById('paypal-button-container');
+                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+            });
+        }
+    }).render('#paypalbutton');
+</script>
+

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Live Commerce Platform", "Live Commerce Platform\Live Commerce Platform.csproj", "{A0508686-0B77-432B-B24B-7F98336A17BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApP", "ConsoleApP\ConsoleApP.csproj", "{E1D680D1-4F62-4B1A-95AF-98F62D39358A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0508686-0B77-432B-B24B-7F98336A17BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0508686-0B77-432B-B24B-7F98336A17BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0508686-0B77-432B-B24B-7F98336A17BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0508686-0B77-432B-B24B-7F98336A17BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1D680D1-4F62-4B1A-95AF-98F62D39358A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1D680D1-4F62-4B1A-95AF-98F62D39358A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1D680D1-4F62-4B1A-95AF-98F62D39358A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1D680D1-4F62-4B1A-95AF-98F62D39358A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6796E78C-365C-4DB8-9178-015FC8018B25}
+	EndGlobalSection
+EndGlobal

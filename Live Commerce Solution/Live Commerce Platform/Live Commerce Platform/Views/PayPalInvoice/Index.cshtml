@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="/vendors/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/vendors/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/vendors/themify-icons/css/themify-icons.css">
+<link rel="stylesheet" href="/vendors/flag-icon-css/css/flag-icon.min.css">
+<link rel="stylesheet" href="/vendors/selectFX/css/cs-skin-elastic.css">
+<link rel="stylesheet" href="/vendors/jqvmap/dist/jqvmap.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
+
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script>
+    var invoiceRequest = {
+        "merchant_info": {},
+        "billing_info": [],
+        "shipping_info": {},
+        "items": [],
+        "shipping_cost": {},
+        "note" : ""
+    };
+
+    function calculateSubtotal(itemDetails) {
+        let subtotal = 0;
+        for (var i = 0; i < itemDetails.length; i++) {
+            subtotal += itemDetails[i].ItemQuantity * itemDetails[i].ItemAmount;
+        }
+        return subtotal;
+    }
+
+    function addInvoiceOrder() {
+        $('#invoice-remove-order').css("display", "");
+        i = $("#invoice-order-table").find("tr").length - 1;
+        var $tr = "<tr><td>" + ++i + "</td><td><input type='text' class='form-control' id='invoice-item-name" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='invoice-item-quantity" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='invoice-item-amount" + i + "'></td><td>";
+        $tr += "<input type='text' class='form-control' id='invoice-item-description" + i + "'></td></tr>";
+        $("#invoice-order-table").append($tr);
+    }
+
+    function removeInvoiceOrder() {
+        $("#invoice-order-table").find("tr").last().remove();
+        if ($("#invoice-order-table").find("tr").length == 2) {
+            $('#invoice-remove-order').css("display", "none");
+        }
+    }
+
+    function getInvoiceRequest() {
+        var ItemDetail = {};
+        invoiceRequest.merchant_info = {
+            "email": $('#invoice-email').val(),
+            "business_name": $('#invoice-business-name').val()
+        };
+
+        invoiceRequest.billing_info[0] = {
+            "email": $('#invoice-buyer-email').val()
+        };
+
+        invoiceRequest.shipping_info = {
+            "first_name": $('#invoice-first-name').val(),
+            "last_name": $('#invoice-last-name').val(),
+            "address": {
+                "country_code": $('#invoice-country').val(),
+                "line1": $('#invoice-address').val(),
+                "city": $('#invoice-city').val(),
+                "state": "CA",
+                "postal_code": $('#invoice-zip-code').val()
+            }
+        };
+
+        invoiceRequest.shipping_cost = {
+            "amount": {
+                "currency": "USD",
+                "value": $('#invoice-shipping-fee').val()
+            }
+        };
+
+        for (i = 1; i <= $("#invoice-order-table").find("tr").length - 1; i++) {
+            //console.log($("#itemName" + i + "").val());
+            ItemDetail = {
+                "name": $("#invoice-item-name" + i + "").val(),
+                "quantity": $("#invoice-item-quantity" + i + "").val(),
+                "unit_price": {
+                    "currency": 'USD',
+                    "value": $("#invoice-item-amount" + i + "").val()
+                },
+                "description": $("#invoice-item-description" + i + "").val(),
+            };
+            invoiceRequest.items.push(ItemDetail);
+        }
+    }
+
+    function createDraftInvoice() {
+        getInvoiceRequest();
+        console.log(invoiceRequest);
+        $.ajax({
+            url: '/PayPalInvoice/CreateDraftInvoice',
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "invoiceRequest": invoiceRequest
+            }),
+            success: function (res) {
+                var json = JSON.parse(res);
+                console.log(json);
+                if (json.status == 'DRAFT') {
+                    window.alert("Invoice Created!");
+                }
+            }
+        })
+    }
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Create PayPal Invoicing</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Merchant Info</h2>
+            <br />
+            <div class="form-group">
+                <input type="text" class="form-control" id="invoice-email" placeholder="Email" value="sb-wd43vf15334777@business.example.com">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="invoice-business-name" placeholder="Business Name" value="Testing Invoice">
+            </div>
+
+            <h3 class="text-center">Item Details</h3>
+            <br />
+            <table class="table" id="invoice-order-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th><button type="button" class="btn btn-primary" onclick="addInvoiceOrder();">+</button></th>
+                        <th id="invoice-remove-order" style="display:none"><button type="button" class="btn btn-primary" onclick="removeInvoiceOrder();">-</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" class="form-control" id="invoice-item-name1"></td>
+                        <td><input type="text" class="form-control" id="invoice-item-quantity1"></td>
+                        <td><input type="text" class="form-control" id="invoice-item-amount1"></td>
+                        <td><input type="text" class="form-control" id="invoice-item-description1"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="text-center">Billing Info</h3>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="invoice-buyer-email" placeholder="Email Address" value="testing@paypal.com">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-first-name" placeholder="First Name" value="Jin">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-last-name" placeholder="Last Name" value="Li">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-address" placeholder="Address" value="11 philidelphia ave">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-city" placeholder="City" value="Los Angeles">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-state" placeholder="State" value="Califonia">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-country" placeholder="Country" value="US">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-zip-code" placeholder="Post Code" value="90001">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="invoice-phone-number" placeholder="Phone Number" value="5555555555">
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="invoice-shipping-fee" placeholder="Shipping Fee" value="10">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="button" class="form-control btn btn-primary" onclick="createDraftInvoice()">Create Invoice</button>
+        </div>
+    </div>
+

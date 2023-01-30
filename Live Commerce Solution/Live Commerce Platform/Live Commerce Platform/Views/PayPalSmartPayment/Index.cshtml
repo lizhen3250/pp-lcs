@@ -1,0 +1,469 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+<script>
+    var layout = "vertical";
+    var shape = "rect";
+    var color = "gold";
+    var label = "buynow";
+    $(document).ready(function () {
+
+        $("#spb-layout").click(function (e) {
+            $('#paypalbutton').remove();
+            $('#spbbutton').append("<div id='paypalbutton'> </div>");
+            layout = e.target.id;
+            paypal.Buttons({
+                style: {
+                    layout: layout,
+                    label: label,
+                    color: color,
+                    shape: shape
+                },
+                // Sets up the transaction when a payment button is clicked
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '77.44' // Can also reference a variable or function
+                            }
+                        }]
+                    });
+                },
+                // Finalize the transaction after payer approval
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(function (orderData) {
+                        // Successful capture! For dev/demo purposes:
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        const transaction = orderData.purchase_units[0].payments.captures[0];
+                        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        // When ready to go live, remove the alert and show a success message within this page. For example:
+                        // const element = document.getElementById('paypal-button-container');
+                        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                    });
+                }
+            }).render('#paypalbutton');
+            if (e.target.innerText != 'Vertical') {
+                $("#spb-layout #vertical").removeClass("btn-primary");
+                $("#spb-layout #horizontal").addClass("btn-primary");
+            } else {
+                $("#spb-layout #vertical").addClass("btn-primary");
+                $("#spb-layout #horizontal").removeClass("btn-primary");
+            }
+        });
+
+        $("#spb-shape").click(function (e) {
+            $('#paypalbutton').remove();
+            $('#spbbutton').append("<div id='paypalbutton'> </div>");
+            shape = e.target.id;
+            paypal.Buttons({
+                style: {
+                    layout: layout,
+                    label: label,
+                    color: color,
+                    shape: e.target.id
+                },
+                // Sets up the transaction when a payment button is clicked
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '77.44' // Can also reference a variable or function
+                            }
+                        }]
+                    });
+                },
+                // Finalize the transaction after payer approval
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(function (orderData) {
+                        // Successful capture! For dev/demo purposes:
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        const transaction = orderData.purchase_units[0].payments.captures[0];
+                        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        // When ready to go live, remove the alert and show a success message within this page. For example:
+                        // const element = document.getElementById('paypal-button-container');
+                        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                    });
+                }
+            }).render('#paypalbutton');
+            if (e.target.innerText != 'Rectangle') {
+                $("#spb-shape #rect").removeClass("btn-primary");
+                $("#spb-shape #pill").addClass("btn-primary");
+            } else {
+                $("#spb-shape #rect").addClass("btn-primary");
+                $("#spb-shape #pill").removeClass("btn-primary");
+            }
+        });
+
+        $("#spb-color").click(function (e) {
+            $('#paypalbutton').remove();
+            $('#spbbutton').append("<div id='paypalbutton'> </div>");
+            color = e.target.id;
+            paypal.Buttons({
+                style: {
+                    layout: layout,
+                    label: label,
+                    color: color,
+                    shape: shape
+                },
+                // Sets up the transaction when a payment button is clicked
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '77.44' // Can also reference a variable or function
+                            }
+                        }]
+                    });
+                },
+                // Finalize the transaction after payer approval
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(function (orderData) {
+                        // Successful capture! For dev/demo purposes:
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        const transaction = orderData.purchase_units[0].payments.captures[0];
+                        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        // When ready to go live, remove the alert and show a success message within this page. For example:
+                        // const element = document.getElementById('paypal-button-container');
+                        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                    });
+                }
+            }).render('#paypalbutton');
+
+            if (e.target.id == 'gold') {
+                $("#spb-color #" + e.target.id).addClass("btn-primary");
+                $("#spb-color #blue").removeClass("btn-primary");
+                $("#spb-color #silver").removeClass("btn-primary");
+                $("#spb-color #white").removeClass("btn-primary");
+                $("#spb-color #black").removeClass("btn-primary");
+            } else if (e.target.id == 'blue') {
+                $("#spb-color #" + e.target.id).addClass("btn-primary");
+                $("#spb-color #gold").removeClass("btn-primary");
+                $("#spb-color #silver").removeClass("btn-primary");
+                $("#spb-color #white").removeClass("btn-primary");
+                $("#spb-color #black").removeClass("btn-primary");
+            } else if (e.target.id == 'silver') {
+                $("#spb-color #" + e.target.id).addClass("btn-primary");
+                $("#spb-color #gold").removeClass("btn-primary");
+                $("#spb-color #blue").removeClass("btn-primary");
+                $("#spb-color #white").removeClass("btn-primary");
+                $("#spb-color #black").removeClass("btn-primary");
+            } else if (e.target.id == 'white') {
+                $("#spb-color #" + e.target.id).addClass("btn-primary");
+                $("#spb-color #gold").removeClass("btn-primary");
+                $("#spb-color #silver").removeClass("btn-primary");
+                $("#spb-color #blue").removeClass("btn-primary");
+                $("#spb-color #black").removeClass("btn-primary");
+            } else if (e.target.id == 'black') {
+                $("#spb-color #" + e.target.id).addClass("btn-primary");
+                $("#spb-color #gold").removeClass("btn-primary");
+                $("#spb-color #silver").removeClass("btn-primary");
+                $("#spb-color #white").removeClass("btn-primary");
+                $("#spb-color #blue").removeClass("btn-primary");
+            }
+        });
+
+        $("#spb-text").click(function (e) {
+
+            $('#paypalbutton').remove();
+            $('#spbbutton').append("<div id='paypalbutton'> </div>");
+
+            label = e.target.id;
+            paypal.Buttons({
+                style: {
+                    layout: layout,
+                    label: label,
+                    color: color,
+                    shape: shape
+                },
+                // Sets up the transaction when a payment button is clicked
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '77.44' // Can also reference a variable or function
+                            }
+                        }]
+                    });
+                },
+                // Finalize the transaction after payer approval
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(function (orderData) {
+                        // Successful capture! For dev/demo purposes:
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        const transaction = orderData.purchase_units[0].payments.captures[0];
+                        alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        // When ready to go live, remove the alert and show a success message within this page. For example:
+                        // const element = document.getElementById('paypal-button-container');
+                        // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                    });
+                }
+            }).render('#paypalbutton');
+            if (e.target.id == 'paypal') {
+                $("#spb-text #" + e.target.id).addClass("btn-primary");
+                $("#spb-text #checkout").removeClass("btn-primary");
+                $("#spb-text #buynow").removeClass("btn-primary");
+                $("#spb-text #pay").removeClass("btn-primary");
+            } else if (e.target.id == 'checkout') {
+                $("#spb-text #" + e.target.id).addClass("btn-primary");
+                $("#spb-text #paypal").removeClass("btn-primary");
+                $("#spb-text #buynow").removeClass("btn-primary");
+                $("#spb-text #pay").removeClass("btn-primary");
+            } else if (e.target.id == 'buynow') {
+                $("#spb-text #" + e.target.id).addClass("btn-primary");
+                $("#spb-text #checkout").removeClass("btn-primary");
+                $("#spb-text #paypal").removeClass("btn-primary");
+                $("#spb-text #pay").removeClass("btn-primary");
+            } else if (e.target.id == 'pay') {
+                $("#spb-text #" + e.target.id).addClass("btn-primary");
+                $("#spb-text #checkout").removeClass("btn-primary");
+                $("#spb-text #buynow").removeClass("btn-primary");
+                $("#spb-text #paypal").removeClass("btn-primary");
+            }
+        });
+
+
+    });
+
+    function addOrderDetails() {
+        $('#removeOrder').css("display", "");
+        i = $("#orderTable").find("tr").length - 2;
+        var $tr = "<tr><td>" + ++i + "</td><td><input type='text' class='form-control' id='itemName" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='itemQuantity" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='itemAmount" + i + "'></td><td>";
+        $tr += "<input type='text' class='form-control' id='itemDescription" + i + "'></td></tr>";
+        $("#orderTable").append($tr);
+    }
+
+    function removeOrderDetails() {
+        $("#orderTable").find("tr").last().remove();
+        if ($("#orderTable").find("tr").length == 3) {
+            $('#removeOrder').css("display", "none");
+        }
+    }
+    function viewCheckoutPage() {
+        //var buttonStyle = setButtonStyle();
+        //console.log(buttonStyle);
+        var PurchaseUnits = {
+            "OrderDetail": {},
+            "ButtonStyle": {},
+            "ItemDetails": [],
+            "ContactInformation": {}
+        };
+        ItemDetails = [];
+        var ItemDetail = {};
+        var OrderDetails = {
+            "Description": $('#description').val(),
+            "InvoiceNumber": $('#invoice_number').val(),
+            "ShippingFee": $('#shippingfee').val()
+        };
+
+        for (i = 1; i <= $("#orderTable").find("tr").length - 2; i++) {
+            //console.log($("#itemName" + i + "").val());
+            ItemDetail = {
+                "ItemName": $("#itemName" + i + "").val(),
+                "ItemQuantity": $("#itemQuantity" + i + "").val(),
+                "ItemAmount": $("#itemAmount" + i + "").val(),
+                "ItemDescription": $("#itemDescription" + i + "").val(),
+            };
+            ItemDetails.push(ItemDetail);
+        }
+
+        PurchaseUnits.OrderDetail = OrderDetails;
+        PurchaseUnits.ItemDetails = ItemDetails;
+        PurchaseUnits.ButtonStyle = {
+            "layout": layout,
+            "shape": shape,
+            "color": color,
+            "label": label
+        };
+
+        localStorage.setItem("SPBView", JSON.stringify(PurchaseUnits));
+        window.location.href = "/PayPalSmartPayment/PageReview";
+
+        //$.ajax({
+        //    url: '/PayPalSmartPayment/CheckoutPageReview',
+        //    data: JSON.stringify(PurchaseUnits),
+        //    method: 'post',
+        //    dataType: 'json',
+        //    contentType: 'application/json',
+        //    success: function (data) {
+        //        console.log(data);
+                
+        //    }
+        //});
+    }
+
+
+
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Create Checkout Page</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="text-center">Order Details</h2>
+            <br />
+            <div class="form-group">
+                @*<label for="inputEmail">Description</label>*@
+                <input type="text" class="form-control" id="description" placeholder="Description">
+            </div>
+            <div class="form-group">
+                @*<label for="inputPassword">Inoivice Number</label>*@
+                <input type="text" class="form-control" id="invoice_number" placeholder="Invoice Number">
+            </div>
+            <div class="form-group">
+                @*<label for="inputPassword">Inoivice Number</label>*@
+                <input type="text" class="form-control" id="shippingfee" placeholder="Shipping Fee">
+            </div>
+
+            <h3 class="text-center">Item Details</h3>
+            <br />
+
+            <table class="table" id="orderTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th><button type="button" class="btn btn-primary" onclick="addOrderDetails();">+</button></th>
+                        <th id="removeOrder" style="display:none"><button type="button" class="btn btn-primary" onclick="removeOrderDetails();">-</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="orderTr">
+                        <td>1</td>
+                        <td><input type="text" class="form-control" id="itemName1"></td>
+                        <td><input type="text" class="form-control" id="itemQuantity1"></td>
+                        <td><input type="text" class="form-control" id="itemAmount1"></td>
+                        <td><input type="text" class="form-control" id="itemDescription1"></td>
+                    </tr>
+                    <tr style="display:none">
+                        <td colspan="4"></td>
+                        <td>Total Amount:</td>
+                        <td><span id="totalAmount"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="col-md-1">
+
+        </div>
+        <div class="col-md-5">
+            <h2 class="text-center">Smart Payment Button Style</h2>
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="Layout">Layout</label>
+                </div>
+                <div class="col-md-9" id="spb-layout">
+                    <button type="button" class="btn btn-primary" id="vertical">Vertical</button>
+                    <button type="button" class="btn" id="horizontal">Horizontal</button>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="Shape">Shape</label>
+                </div>
+                <div class="col-md-9" id="spb-shape">
+                    <button type="button" class="btn btn-primary" id="rect">Rectangle</button>
+                    <button type="button" class="btn btn-default" id="pill">Pill</button>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="Layout">Color</label>
+                </div>
+                <div class="col-md-9" id="spb-color">
+                    <button type="button" class="btn btn-primary" id="gold">Gold</button>
+                    <button type="button" class="btn btn-default" id="blue">Blue</button>
+                    <button type="button" class="btn btn-default" id="silver">Silver</button>
+                    <button type="button" class="btn btn-default" id="white">White</button>
+                    <button type="button" class="btn btn-default" id="black">Black</button>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="Layout">Button Text</label>
+                </div>
+
+                <div class="col-md-9" id="spb-text">
+                    <button type="button" class="btn btn-primary" id="paypal">PayPal</button>
+                    <button type="button" class="btn btn-default" id="checkout">Checkout</button>
+                    <button type="button" class="btn btn-default" id="buynow">Buy Now</button>
+                    <button type="button" class="btn btn-default" id="pay">Pay</button>
+                </div>
+
+            </div>
+            <br />
+            <br />
+            <p>
+                <div id="spbbutton">
+                    <div id="paypalbutton"></div>
+                </div>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#"><button type="button" class="form-control btn btn-primary" onclick="viewCheckoutPage();">View</button></a>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Set up a container element for the button -->
+<script>
+    paypal.Buttons({
+        style: {
+            layout: "vertical",
+            label: 'buynow',
+            color: 'gold',
+            shape: 'rect'
+        },
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '77.44' // Can also reference a variable or function
+                    }
+                }]
+            });
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+            return actions.order.capture().then(function (orderData) {
+                // Successful capture! For dev/demo purposes:
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                const transaction = orderData.purchase_units[0].payments.captures[0];
+                alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                // When ready to go live, remove the alert and show a success message within this page. For example:
+                // const element = document.getElementById('paypal-button-container');
+                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+            });
+        }
+    }).render('#paypalbutton');
+</script>

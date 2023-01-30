@@ -1,0 +1,174 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="/vendors/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/vendors/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/vendors/themify-icons/css/themify-icons.css">
+<link rel="stylesheet" href="/vendors/flag-icon-css/css/flag-icon.min.css">
+<link rel="stylesheet" href="/vendors/selectFX/css/cs-skin-elastic.css">
+<link rel="stylesheet" href="/vendors/jqvmap/dist/jqvmap.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
+
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script>
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+        var r = window.location.search.substr(1).match(reg); 
+        if (r != null) return unescape(r[2]); return null; 
+    }
+
+    function capturePayment() {
+        var orderId = getUrlParam('token');
+        $.ajax({
+            url: '/PayPalExpressCheckout/ConfirmOrder',
+            method: 'post',
+            data: { "orderId": orderId },
+            success: function (res) {
+                var json = JSON.parse(res);
+                console.log(json);
+                if (json.status == 'COMPLETED') {
+                    window.location.href = "/Home/Success";
+                }
+                
+            }
+        })     
+    }
+
+    function loadData(data) {
+        var orderId = getUrlParam('token');
+
+    }
+    $(document).ready(function () {
+        var orderId = getUrlParam('token');
+        console.log(orderId);
+        $.ajax({
+            url: '/PayPalExpressCheckout/GetOrderDetails',
+            method: 'get',
+            contentType: 'application/json',
+            data: {"orderId" : orderId},
+            success: function (json) {
+                var data = JSON.parse(json);
+                console.log(data);
+                $('#confirm-email').val(data.payer.email_address);
+                $('#confirm-country').val(data.payer.address.country_code);
+                $('#confirm-first-name').val(data.payer.name.given_name);
+                $('#confirm-last-name').val(data.payer.name.surname);
+                $('#confirm-address').val(data.payer.address.address_line_1);
+                $('#confirm-city').val(data.payer.address.admin_area_2);
+                $('#confirm-state').val(data.payer.address.admin_area_1);
+                $('#confirm-zip-code').val(data.payer.address.postal_code);
+                $('#confirm-total').text(data.purchase_units[0].amount.value);
+                $('#confirm-subtotal').text(data.purchase_units[0].amount.breakdown.item_total.value);
+                $('#confirm-shipping-fee').text(data.purchase_units[0].amount.breakdown.shipping.value);
+                var str = "";
+                for (var i = 0; i < data.purchase_units[0].items.length; i++) {
+                    str += "<div class='row'><div class='col-md-11 col-sm-11'><p><label id='confirm-item-name" + i + "'>" + data.purchase_units[0].items[i].name + "</label><label id='confirm-item-quantity" + i + "'> × " + data.purchase_units[0].items[i].quantity + "</label></p></div><div class='col-md-1'><p><label id='confirm-item-amount" + i + "'>$" + data.purchase_units[0].items[i].unit_amount.value + "</label></p></div></div>";
+                }
+                $('#confirm-itemdetails').append(str);
+            }
+        })
+    });
+</script>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ConfirmOrder</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Confirm Order</h2>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="inputEmail">Contact Information</label>
+                <input type="text" class="form-control" id="confirm-email" readonly/>
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="inputEmail">Shipping address</label>
+                        <input type="text" class="form-control" id="confirm-country" readonly />
+                    </div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="confirm-first-name" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="confirm-last-name" readonly />
+                    </div>
+                </div>
+                <p></p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" id="confirm-address" readonly />
+                    </div>
+                </div>
+                <p></p>
+                @*<div class="row">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" id="confirm-apartment" readonly />
+                    </div>
+                </div>*@
+                <p></p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="confirm-city" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="confirm-state" readonly/>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="confirm-zip-code" readonly />
+                    </div>
+                </div>
+                <p></p>
+                @*<div class="row">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" id="confirm-phone-number" readonly/>
+                    </div>
+                </div>*@
+                <p></p>
+            </div>
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-5">
+                <div id="confirm-itemdetails">
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-11">
+                        <p>Subtotal</p>
+                        <p>Shipping Fee</p>
+                    </div>
+                    <div class="col-md-1">
+                        <p><label>$<span id="confirm-subtotal"></span></label></p>
+                        <p><label>$<span id="confirm-shipping-fee"></span></label></p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-11">
+                        <p>Total</p>
+                    </div>
+                    <div class="col-md-1">
+                        <p><label>$<span id="confirm-total"></span></label></p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" class="form-control btn btn-primary" onclick="capturePayment()">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+﻿@model Live_Commerce_Platform.PayPalApi.PayPalInvoices
+@{
+    ViewBag.Title = "AllInvoices";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#all').click(function () {
+            $("input[type='search']").val('');
+            $("input[type='search']").focus();
+        });
+
+        $('#draft').click(function () {
+            $("input[type='search']").val('draft');
+            $("input[type='search']").focus();
+        });
+
+        $('#unpaid').click(function () {
+            $("input[type='search']").val('unpaid');
+            $("input[type='search']").focus();
+        });
+
+        $('#paid').click(function () {
+            $("input[type='search']").val('paid');
+            $("input[type='search']").focus();
+        });
+
+        $('#refunded').click(function () {
+            $("input[type='search']").val('refund');
+            $("input[type='search']").focus();
+        });
+    });
+</script>
+
+<div class="content mt-3">
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-md-12">                
+                <div class="card">
+                    <div class="card-header" style="height:70px;">
+                        <div class="navbar navbar-expand-sm bg-dark">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="all">ALL</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="draft">DRAFT</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="unpaid">UNPAID</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="paid">PAID</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="refunded">REFUNDED</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Status</th>
+                                    <th>Billing Email</th>
+                                    <th>Amount</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invoiceDetail in Model.invoices)
+                                {
+                                    <tr>
+                                        <td>@invoiceDetail.id</td>
+                                        <td>@invoiceDetail.status</td>
+                                        <td>@invoiceDetail.billing_info[0].email</td>
+                                        <td>@invoiceDetail.total_amount.value</td>
+                                        <td>
+                                            <button type="submit" class="btn btn-primary btn-default" data-target="#editModel" data-toggle="modal" onclick="getTransactionDetail('@invoiceDetail.id')">View</button>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div><!-- .animated -->
+</div>
+
+<div class="modal fade" id="editModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Transaction details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" onclick="close()">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <p id="tr-transaction-updated-date"></p>
+                    <p>Transaction ID: <span id="tr-transaction-id"></span></p>
+                    <p>Gross amount: <b><span id="tr-top-gross-amount"></span></b></p>
+                    <p>Payment status: <span id="tr-transaction-status"></span></p>
+                </div>
+                <hr />
+                <div class="mb-3">
+                    <p>Payment details</p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>Gross amount</td>
+                                <td><span id="tr-gross-amount"></span></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PayPal Fee</td>
+                                <td><span id="tr-paypal-fee"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Net amount</td>
+                                <td><span id="tr-net-amount"></span></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <div class="mb-3">
+                    <p>Memo : <span id="tr-description"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="refundTransaction()">Refund</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    function getTransactionDetail(transactionId) {
+        $.ajax({
+            url: '/PayPalExpressCheckout/GetTransactiondDetail',
+            type: "GET",
+            data: { transactionId: transactionId },
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                var res = JSON.parse(data);
+                console.log(res);
+                var transaction_info = res.transaction_details[0].transaction_info;
+                $('#tr-transaction-updated-date').text(transaction_info.transaction_updated_date);
+                $('#tr-transaction-id').text(transaction_info.transaction_id);
+                $('#tr-top-gross-amount').text(transaction_info.transaction_amount.value + " " + transaction_info.transaction_amount.currency_code);
+                $('#tr-transaction-status').text(transaction_info.transaction_status);
+                $('#tr-gross-amount').text(transaction_info.transaction_amount.value + " " + transaction_info.transaction_amount.currency_code);
+                $('#tr-paypal-fee').text(transaction_info.fee_amount.value + " " + transaction_info.fee_amount.currency_code);
+                $('#tr-description').text(transaction_info.transaction_subject);
+                var netAmount = parseFloat(transaction_info.transaction_amount.value) + parseFloat(transaction_info.fee_amount.value);
+                $('#tr-net-amount').text(netAmount + " " + transaction_info.fee_amount.currency_code);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    };
+
+    function refundTransaction() {
+        var transactionId = $('#tr-transaction-id').text();
+        console.log(transactionId);
+        $.ajax({
+            url: '/PayPalExpressCheckout/RefundTransaction',
+            type: "post",
+            data: { 'transactionId': transactionId },
+            success: function (data) {
+                var res = JSON.parse(data);
+                //console.log(data);
+                console.log(res);
+                if (json.status == 'COMPLETED') {
+                    window.alert('Refunded.');
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function getDateFromAspNetFormat(date) {
+        const re = /-?\d+/;
+        const m = re.exec(date);
+        return parseInt(m[0], 10);
+    }
+
+    Date.prototype.format = function (format) {
+        var date = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/i.test(format)) {
+            format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+        }
+        for (var k in date) {
+            if (new RegExp("(" + k + ")").test(format)) {
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+            }
+        }
+        return format;
+    };
+</script>
+

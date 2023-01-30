@@ -1,0 +1,242 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="/vendors/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/vendors/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/vendors/themify-icons/css/themify-icons.css">
+<link rel="stylesheet" href="/vendors/flag-icon-css/css/flag-icon.min.css">
+<link rel="stylesheet" href="/vendors/selectFX/css/cs-skin-elastic.css">
+<link rel="stylesheet" href="/vendors/jqvmap/dist/jqvmap.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/vendors/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
+
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/vendors/jquery/dist/jquery.min.js"></script>
+<script>
+    var purchaseUnitRequest = {
+        "OrderDetail": {},
+        "ContactInformation": {},
+        "ItemDetails": [],
+        "IsSPB": false
+     };
+
+                function calculateSubtotal(itemDetails) {
+                    let subtotal = 0;
+                    for(var i = 0; i<itemDetails.length; i++) {
+            subtotal += itemDetails[i].ItemQuantity * itemDetails[i].ItemAmount;
+        }
+        return subtotal;
+    }
+
+    function addEcOrder() {
+        $('#ec-remove-order').css("display", "");
+        i = $("#ec-order-table").find("tr").length - 1;
+        console.log(i);
+        var $tr = "<tr><td>" + ++i + "</td><td><input type='text' class='form-control' id='ec-item-name" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='ec-item-quantity" + i + "'></td>";
+        $tr += "<td><input type='text' class='form-control' id='ec-item-amount" + i + "'></td><td>";
+        $tr += "<input type='text' class='form-control' id='ec-item-description" + i + "'></td></tr>";
+        $("#ec-order-table").append($tr);
+    }
+
+    function removeECOrder() {
+        $("#ec-order-table").find("tr").last().remove();
+        if ($("#ec-order-table").find("tr").length == 2) {
+            $('#ec-remove-order').css("display", "none");
+        }
+    }
+
+    function getPurchaseUnitRequest() {
+        ItemDetails = [];
+        var ItemDetail = {};
+        var OrderDetails = {
+            "Description": $('#ec-description').val(),
+            "InvoiceNumber": $('#ec-invoice-number').val(),
+            "ShippingFee": $('#ec-shipping-fee').val()
+        };
+
+        for (i = 1; i <= $("#ec-order-table").find("tr").length - 1; i++) {
+            //console.log($("#itemName" + i + "").val());
+            ItemDetail = {
+                "ItemName": $("#ec-item-name" + i + "").val(),
+                "ItemQuantity": $("#ec-item-quantity" + i + "").val(),
+                "ItemAmount": $("#ec-item-amount" + i + "").val(),
+                "ItemDescription": $("#ec-item-description" + i + "").val(),
+            };
+            ItemDetails.push(ItemDetail);
+        }
+        purchaseUnitRequest.OrderDetail = OrderDetails;
+        purchaseUnitRequest.ItemDetails = ItemDetails;
+        purchaseUnitRequest.ContactInformation = {
+            "email": $('#ec-email-address').val(),
+            "shippingAddress": {
+                "country": $('#ec-country').val(),
+                "firstName": $('#ec-first-name').val(),
+                "lastName": $('#ec-last-name').val(),
+                "address": $('#ec-address').val(),
+                "city": $('#ec-city').val(),
+                "state": "CA",
+                "zipCode": $('#ec-zip-code').val(),
+                "phoneNumber": $('#ec-phone-number').val()
+            }
+        }
+        purchaseUnitRequest.IsSPB = false;
+    }
+
+    function createPaymentUrl() {
+        getPurchaseUnitRequest();
+        var subTotal = calculateSubtotal(purchaseUnitRequest.ItemDetails);
+        purchaseUnitRequest.OrderDetail.SubTotal = subTotal;
+        purchaseUnitRequest.OrderDetail.Total = parseFloat(subTotal) + parseFloat(purchaseUnitRequest.OrderDetail.ShippingFee);
+
+        console.log(purchaseUnitRequest);
+       $.ajax({
+          url: '/PayPalExpressCheckout/CreateOrder',
+          method: 'post',
+          contentType: 'application/json',
+           data: JSON.stringify({
+               "purchaseUnitRequest": purchaseUnitRequest
+           }),
+          success: function (res) {
+              var json = JSON.parse(res);
+              console.log(json);
+              var approve_url;
+              if (json.status == 'CREATED') {
+                  for (var i = 0; i < json.links.length; i++) {
+                      if (json.links[i].rel == 'approve') {
+                          approve_url = json.links[i].href;
+                          console.log(approve_url);
+                          $('#payment-url').text(approve_url);
+                      }
+                  }
+              }
+          }
+       })
+     }
+
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Create PayPal Express Checkout Payment URL</h1>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Order Details</h2>
+            <br />
+            <div class="form-group">
+                @*<label for="inputEmail">Description</label>*@
+                <input type="text" class="form-control" id="ec-description" placeholder="Description" value="description">
+            </div>
+            <div class="form-group">
+                @*<label for="inputPassword">Inoivice Number</label>*@
+                <input type="text" class="form-control" id="ec-invoice-number" placeholder="Invoice Number" value="invoice number">
+            </div>
+
+            <h3 class="text-center">Item Details</h3>
+            <br />
+
+            <table class="table" id="ec-order-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th><button type="button" class="btn btn-primary" onclick="addEcOrder();">+</button></th>
+                        <th id="ec-remove-order" style="display:none"><button type="button" class="btn btn-primary" onclick="removeECOrder();">-</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" class="form-control" id="ec-item-name1"></td>
+                        <td><input type="text" class="form-control" id="ec-item-quantity1"></td>
+                        <td><input type="text" class="form-control" id="ec-item-amount1"></td>
+                        <td><input type="text" class="form-control" id="ec-item-description1"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="text-center">Shipping Details</h3>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="ec-email-address" placeholder="Email Address" value="testing@paypal.com">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-first-name" placeholder="First Name" value="Jin">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-last-name" placeholder="Last Name" value="Li">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-address" placeholder="Address" value="11 philidelphia ave">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-city" placeholder="City" value="Los Angeles">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-state" placeholder="State" value="Califonia">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-country" placeholder="Country" value="US">
+                </div>
+
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-zip-code" placeholder="Post Code" value="90001">
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="ec-phone-number" placeholder="Phone Number" value="5555555555">
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="ec-shipping-fee" placeholder="Shipping Fee" value="10">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="button" class="btn btn-primary" onclick="createPaymentUrl()">Create Payment URL</button>
+        </div>
+    </div>
+    <br />
+    <br />
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h4 class="warning" id="payment-url"></h4>
+        </div>
+    </div>
+
+
+
