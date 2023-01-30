@@ -64,7 +64,7 @@ namespace Live_Commerce_Platform.Controllers
         {
             Configuration config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
             AppSettingsSection appSection = (AppSettingsSection)config.GetSection("appSettings");
-            if (appSection.Settings["ClientId"] == null)
+            if (appSection.Settings["ClientId"].Value == string.Empty)
                 return false;
             return true;
         }
