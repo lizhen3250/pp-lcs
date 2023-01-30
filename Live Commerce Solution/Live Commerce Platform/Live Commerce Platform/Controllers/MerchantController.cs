@@ -21,6 +21,13 @@ namespace Live_Commerce_Platform.Controllers
             return View(json);
         }
 
+        public string GetMerchantEmail()
+        {
+            PayPalClient.GetAccessToken();
+            var response = PayPalIdentity.GetUserInfo();
+            return response.Content;
+        }
+
         public ActionResult Disconnect()
         {
 
