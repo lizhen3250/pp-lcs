@@ -1,8 +1,55 @@
-﻿
+﻿@model Live_Commerce_Platform.PayPalApi.PayPalMerchantInfo
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Index</h2>
+<style>
+    .col-center-block{
+        float:none;
+        display:block;
+        margin-left:auto;
+        margin-right:auto;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <h4>Personal Information</h4>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-xs-3 col-md-4 ">
+            <label><b>Name</b></label>
+        </div>
+        <div class="col-xs-3">
+            <span>@Model.name</span>
+        </div>
+    </div>
+    <hr /><div class="row">
+        <div class="col-xs-3 col-md-4 ">
+            <label><b>Email</b></label>
+        </div>
+        <div class="col-xs-3">
+            <span>@Model.emails.First().value</span>
+        </div>
+    </div>
+    <hr /><div class="row">
+        <div class="col-xs-3 col-md-4 ">
+            <label><b>Merchant ID</b></label>
+        </div>
+        <div class="col-xs-3">
+            <span>@Model.payer_id</span>
+        </div>
+    </div>
+    <hr /><div class="row">
+        <div class="col-xs-3 col-md-4 ">
+            <label><b>Verified Account</b></label>
+        </div>
+        <div class="col-xs-3">
+            @if (Model.emails.First().confirmed)
+            {
+                <span>YES </span>
+            }
+        </div>
+    </div>
+</div>
 

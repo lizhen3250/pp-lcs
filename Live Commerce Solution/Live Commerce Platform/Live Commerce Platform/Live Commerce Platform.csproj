@@ -179,6 +179,7 @@
     <Compile Include="PayPalApi\PayPalIdentity.cs" />
     <Compile Include="PayPalApi\PayPalInvoice.cs" />
     <Compile Include="PayPalApi\PayPalInvoices.cs" />
+    <Compile Include="PayPalApi\PayPalMerchantInfo.cs" />
     <Compile Include="PayPalApi\PayPalOrder.cs" />
     <Compile Include="PayPalApi\PayPalTransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

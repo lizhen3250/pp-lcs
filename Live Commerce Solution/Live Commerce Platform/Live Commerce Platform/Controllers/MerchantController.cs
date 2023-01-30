@@ -9,31 +9,16 @@ using System.Web.Script.Serialization;
 
 namespace Live_Commerce_Platform.Controllers
 {
-    public class MerchantInfo
-    {
-        public string name { get; set; }
-        public string payer_id { get; set; }
-        public bool verified_account { get; set; }
-
-        public Email email { get; set; }
-    }
-
-    public class Email
-    {
-        public string value { get; set; }
-        public bool confirmed { get; set; }
-        public bool primary { get; set; }
-    }
     public class MerchantController : Controller
     {
         // GET: Merchant
-        public MerchantInfo Index()
+        public ActionResult Index()
         {
             PayPalClient.GetAccessToken();
             var response = PayPalIdentity.GetUserInfo();
             var serialize = new JavaScriptSerializer();
-            var json = serialize.Deserialize<MerchantInfo>(response.Content);
-            return json;
+            var json = serialize.Deserialize<PayPalMerchantInfo>(response.Content);
+            return View(json);
         }
 
         public ActionResult Disconnect()
