@@ -67,6 +67,10 @@
 
 <div class="modal fade" id="editModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
+        <div class="model-load-container">
+            <div class="model-loader">
+            </div>
+        </div>
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Transaction details</h5>
@@ -82,7 +86,7 @@
                     <p>Gross amount: <b><span id="tr-top-gross-amount"></span></b></p>
                     <p>Payment status: <span id="tr-transaction-status"></span></p>
                 </div>
-                <hr />               
+                <hr />
                 <div class="mb-3">
                     <p>Payment details</p>
                     <table class="table">
@@ -126,6 +130,15 @@
             type: "GET",
             data: { transactionId: transactionId },
             contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
             success: function (data) {
                 var res = JSON.parse(data);
                 console.log(res);

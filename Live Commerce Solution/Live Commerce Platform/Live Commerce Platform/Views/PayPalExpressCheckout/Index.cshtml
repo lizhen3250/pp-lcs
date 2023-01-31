@@ -99,6 +99,13 @@
            data: JSON.stringify({
                "purchaseUnitRequest": purchaseUnitRequest
            }),
+           beforeSend: function () {
+               $('.load-container').show();
+               $('.create-payment-url').hide();
+           }, complete: function (data) {
+               $('.load-container').hide();
+               $('.create-payment-url').show();
+           },
           success: function (res) {
               var json = JSON.parse(res);
               console.log(json);
@@ -117,7 +124,7 @@
      }
 
 </script>
-<div class="container">
+<div class="container create-payment-url">
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Create PayPal Express Checkout Payment URL</h1>
