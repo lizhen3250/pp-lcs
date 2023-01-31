@@ -4,14 +4,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="/vendors/jquery/dist/jquery.min.js"></script>
+
 <script>
     var success = false;
     function modalClose() {
         $('#editModel').hide();
         $("#invoice-item-details").find("tr").remove();
         if (success) {
-           window.location.href = "/PayPalInvoice/AllInvoices";
+            window.location.href = "/PayPalInvoice/AllInvoices";
         }
     }
 
@@ -24,10 +24,10 @@
         $('#draft').click(function () {
             $("input[type='search']").val('draft');
             $("input[type='search']").focus();
-        });
+        })
 
         $('#unpaid').click(function () {
-            $("input[type='search']").val('unpaid');
+            $("input[type='search']").val('sent');
             $("input[type='search']").focus();
         });
 
@@ -37,7 +37,7 @@
         });
 
         $('#refunded').click(function () {
-            $("input[type='search']").val('refund');
+            $("input[type='search']").val('refunded');
             $("input[type='search']").focus();
         });
     });
@@ -46,7 +46,7 @@
 <div class="content mt-3">
     <div class="animated fadeIn">
         <div class="row">
-            <div class="col-md-12">                
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header" style="height:70px;">
                         <div class="navbar navbar-expand-sm bg-primary">
@@ -58,7 +58,7 @@
                                     <button class="btn btn-primary" id="draft">DRAFT</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="btn btn-primary" href="#" id="unpaid">UNPAID</button>
+                                    <button class="btn btn-primary" href="#" id="unpaid">SENT</button>
                                 </li>
                                 <li class="nav-item">
                                     <button class="btn btn-primary" href="#" id="paid">PAID</button>
@@ -192,6 +192,8 @@
 <script>
 
     function getInvoiceDetail(invoice_id, invoice_status) {
+        $('.alert-warning').hide();
+        $('.alert-success').hide();
         $.ajax({
             url: '/PayPalInvoice/GetInvoiceDetails',
             type: "GET",
@@ -219,10 +221,10 @@
                 $('#invoice-billing-postal-code').text(res.shipping_info.address.postal_code);
                 $('#invoice-billing-country-code').text(res.shipping_info.address.country_code);
                 $('#invoice-billing-state').text(res.shipping_info.address.state);
-                for (var i=0; i<res.items.length; i++) {
-                    var $tr = "<tr><td><span>"+res.items[i].name+"</span></td>";
-                    $tr += "<td><span>"+res.items[i].quantity+"</span></td>";
-                    $tr += "<td><span>"+res.items[i].unit_price.value+" "+res.items[i].unit_price.currency+"</span></td></tr>";
+                for (var i = 0; i < res.items.length; i++) {
+                    var $tr = "<tr><td><span>" + res.items[i].name + "</span></td>";
+                    $tr += "<td><span>" + res.items[i].quantity + "</span></td>";
+                    $tr += "<td><span>" + res.items[i].unit_price.value + " " + res.items[i].unit_price.currency + "</span></td></tr>";
                     $("#invoice-item-details").append($tr);
                 }
                 $('#invoice-shipping-fee').text(res.shipping_cost.amount.value + " " + res.shipping_cost.amount.currency);
