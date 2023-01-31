@@ -22,11 +22,22 @@
     <link rel="stylesheet" href="/vendors/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="/vendors/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/assets/css/loading.css" rel="stylesheet" />
     <script src="/vendors/jquery/dist/jquery.min.js"></script>
-    
+    <script>
+        $(function () {
+            var hrefs = $("a");
+            for (var i = 0; i < hrefs.length; ++i) {
+                hrefs[i].onclick = function () {
+                    $('.load-container').show();
+                    $('.body').css('display', 'none');
+                }
+            }
+        })
+    </script>
 </head>
 <body>
-
     <!-- Left Panel -->
     <aside id="left-panel" class="left-panel">
         <nav class="navbar navbar-expand-sm navbar-default">
@@ -85,8 +96,12 @@
                 </div>
             </div>
         </header>
-        @RenderBody()
-
+        <div class="load-container" style="display:none">
+            <div class="loader"></div>
+        </div>
+        <div class="body">
+            @RenderBody()
+        </div>
     </div>
     <script src="/vendors/jquery/dist/jquery.min.js"></script>
     <script src="/vendors/popper.js/dist/umd/popper.min.js"></script>
@@ -129,27 +144,6 @@
             });
         })(jQuery);
     </script>
-
-    @*<script>
-        var email = localStorage.getItem("merchantInfo");
-        if (email == null) {
-            console.log("empty");
-            $('#user-email-address').text(email);
-        } else {
-            $.ajax({
-                url: '/Merchant/GetMerchantEmail',
-                type: "post",
-                success: function (data) {
-                    var res = JSON.parse(data);
-                    $('#user-email-address').text(res.emails[0].value);
-                    localStorage.setItem("merchantInfo", res.emails[0].value);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            });
-        }
-    </script>*@
 </body>
 
 

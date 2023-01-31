@@ -5,7 +5,6 @@
 }
 
 <script src="/vendors/jquery/dist/jquery.min.js"></script>
-
 <script>
 
     $(document).ready(function () {
@@ -82,7 +81,7 @@
                                         <td>@invoiceDetail.billing_info[0].email</td>
                                         <td>@invoiceDetail.total_amount.value</td>
                                         <td>
-                                            <button type="submit" class="btn btn-primary btn-default" data-target="#editModel" data-toggle="modal" onclick="getTransactionDetail('@invoiceDetail.id')">View</button>
+                                            <button type="submit" class="btn btn-primary btn-default" data-target="#editModel" data-toggle="modal" onclick="getInvoiceDetail('@invoiceDetail.id', '@invoiceDetail.status')">View</button>
                                         </td>
                                     </tr>
                                 }
@@ -142,9 +141,18 @@
                     <p>Memo : <span id="tr-description"></span></p>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="refundTransaction()">Refund</button>
+            <div class="modal-footer" id="draft-status">
+                <button type="button" class="btn btn-primary">Send</button>
+                <button type="button" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-primary">Delete</button>
+            </div>
+            <div class="modal-footer" id="unpaid-status">
+                <button type="button" class="btn btn-primary">Remind</button>
+                <button type="button" class="btn btn-primary">Cancel</button>
+            </div>
+            <div class="modal-footer" id="paid-status">
+                <button type="button" class="btn btn-primary">Remind</button>
+                <button type="button" class="btn btn-primary">Mark as Paid</button>
             </div>
         </div>
 
@@ -196,6 +204,21 @@
                 console.log(err);
             }
         });
+    }
+
+    function getInvoiceDetail(invoice_id, invoice_status) {
+        if (invoice_status == "DRAFT") {
+            $('#unpaid-status').css("display", "none");
+            $('#paid-status').css("display", "none");
+        } else if (invoice_status == "PAID") {
+            $("#draft-status").css("display", "none");
+            $('#unpaid-status').css("display", "none");
+            $('#paid-status').css("display", "");
+        } else if (invoice_status == "UNPAID") {
+            $("#draft-status").css("display", "none");
+            $('#unpaid-status').css("display", "");
+            $('#paid-status').css("display", "none");
+        }
     }
 
     function getDateFromAspNetFormat(date) {
