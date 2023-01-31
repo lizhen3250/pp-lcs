@@ -10,8 +10,6 @@ namespace Live_Commerce_Platform.Controllers
 {
     public class ApiCredentails
     {
-        public string Email { get; set; }
-        public string MerchantId { get; set; }
         public string ClientId { get; set; }
         public string SecretKey { get; set; }
         public string Mode { get; set; }
@@ -53,11 +51,6 @@ namespace Live_Commerce_Platform.Controllers
             }
 
             return "Failue";
-        }
-
-        public string Identity()
-        {
-            return "";
         }
 
         private bool AppSettingsHasValue()

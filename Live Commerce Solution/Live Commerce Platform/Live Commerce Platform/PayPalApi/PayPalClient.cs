@@ -65,7 +65,7 @@ namespace Live_Commerce_Platform.PayPalApi
             request.AddParameter("grant_type", "client_credentials");
             var response = client.Execute(request);
             var paypalAccessToken = JsonConvert.DeserializeObject<PayPalAccessToken>(response.Content);
-            if (paypalAccessToken != null)
+            if (paypalAccessToken.Access_Token != null)
             {
                 return true;
             }
