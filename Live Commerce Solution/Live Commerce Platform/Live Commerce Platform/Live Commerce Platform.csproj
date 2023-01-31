@@ -186,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\css\apicredentials.css" />
+    <Content Include="assets\css\loading.css" />
     <Content Include="assets\css\style.css" />
     <Content Include="assets\img\logo.png" />
     <Content Include="assets\js\dashboard.js" />

@@ -31,5 +31,16 @@ namespace Live_Commerce_Platform.PayPalApi
             var response = client.Execute(request);
             return response;
         }
+
+        public static RestResponse GetInvoiceDetail(string invoiceId)
+        {
+            var url = PayPalClient.endPoint + "v1/invoicing/invoices/" + invoiceId;
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            request.Method = Method.Get;
+            request.AddHeader("Authorization", PayPalClient.accessToken);
+            var response = client.Execute(request);
+            return response;
+        }
     }
 }

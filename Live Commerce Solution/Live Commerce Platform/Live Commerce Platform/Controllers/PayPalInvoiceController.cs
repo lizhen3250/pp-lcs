@@ -24,15 +24,6 @@ namespace Live_Commerce_Platform.Controllers
             return response.Content;
         }
 
-        public PayPalTransaction GetAllTransactions()
-        {
-            PayPalClient.GetAccessToken();
-            var response = PayPalOrder.GetAllTransactions();
-            var serialize = new JavaScriptSerializer();
-            var json = serialize.Deserialize<PayPalTransaction>(response.Content);
-            return json;
-        }
-
         public ActionResult AllInvoices()
         {
             PayPalClient.GetAccessToken();
@@ -40,6 +31,14 @@ namespace Live_Commerce_Platform.Controllers
             var serialize = new JavaScriptSerializer();
             var paypalInvoices = serialize.Deserialize<PayPalInvoices>(response.Content);
             return View(paypalInvoices);
+        }
+
+        [HttpGet]
+        public string GetInvoiceDetails(string invoiceId)
+        {
+            PayPalClient.GetAccessToken();
+            var response = PayPalInvoice.GetInvoiceDetail(invoiceId);
+            return response.Content;
         }
     }
 }

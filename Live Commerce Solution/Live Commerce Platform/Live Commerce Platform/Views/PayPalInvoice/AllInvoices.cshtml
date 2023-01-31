@@ -7,6 +7,10 @@
 <script src="/vendors/jquery/dist/jquery.min.js"></script>
 <script>
 
+    function close() {
+        $("#invoice-item-details").find("tr").remove();
+    }
+
     $(document).ready(function () {
         $('#all').click(function () {
             $("input[type='search']").val('');
@@ -65,10 +69,12 @@
                         <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Date</th>
                                     <th>Id</th>
                                     <th>Status</th>
                                     <th>Billing Email</th>
                                     <th>Amount</th>
+                                    <th>Paid Amount</th>
                                     <th>Details</th>
                                 </tr>
                             </thead>
@@ -76,10 +82,12 @@
                                 @foreach (var invoiceDetail in Model.invoices)
                                 {
                                     <tr>
+                                        <td>@invoiceDetail.metadata.created_date</td>
                                         <td>@invoiceDetail.id</td>
                                         <td>@invoiceDetail.status</td>
                                         <td>@invoiceDetail.billing_info[0].email</td>
-                                        <td>@invoiceDetail.total_amount.value</td>
+                                        <td>@invoiceDetail.total_amount.value @invoiceDetail.total_amount.currency</td>
+                                        <td>@invoiceDetail.paid_amount.paypal.value @invoiceDetail.paid_amount.paypal.currency</td>
                                         <td>
                                             <button type="submit" class="btn btn-primary btn-default" data-target="#editModel" data-toggle="modal" onclick="getInvoiceDetail('@invoiceDetail.id', '@invoiceDetail.status')">View</button>
                                         </td>
@@ -98,47 +106,63 @@
 
 <div class="modal fade" id="editModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
+        <div class="model-load-container">
+            <div class="model-loader">
+            </div>
+        </div>
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Transaction details</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Invoice details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" onclick="close()">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <p id="tr-transaction-updated-date"></p>
-                    <p>Transaction ID: <span id="tr-transaction-id"></span></p>
-                    <p>Gross amount: <b><span id="tr-top-gross-amount"></span></b></p>
-                    <p>Payment status: <span id="tr-transaction-status"></span></p>
+                    <p>Invoide Date: <b><span id="invoice-date"></span></b></p>
+                    <p>Invoice ID: <b><span id="invoice-id"></span></b></p>
+                    <p>Billing email: <b><span id="invoice-billing-email"></span></b></p>
+                    <p>Gross amount: <b><span id="invoice-gross-amount"></span></b></p>
+                    <p>Invoice status: <b><span id="invoice-status"></span></b></p>
                 </div>
                 <hr />
                 <div class="mb-3">
-                    <p>Payment details</p>
+                    <p style="background-color:silver; font-size:16px; color:black;">Shipping details</p>
+                    <p><span id="invoice-name"></span></p>
+                    <p><span id="invoice-billing-address"></span></p>
+                    <p><span id="invoice-billing-city"></span> <span id="invoice-billing-postal-code"></span></p>
+                    <p><span id="invoice-billing-state"></span> <span id="invoice-billing-country-code"></span></p>
+                </div>
+                <hr />
+                <div class="mb-3">
+                    <p style="background-color:silver; font-size:16px; color:black;">Item details</p>
                     <table class="table">
                         <thead>
                             <tr>
-                                <td>Gross amount</td>
-                                <td><span id="tr-gross-amount"></span></td>
-                                <td></td>
+                                <td>Item name</td>
+                                <td><span>Quantity</span></td>
+                                <td>Unit price</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>PayPal Fee</td>
-                                <td><span id="tr-paypal-fee"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Net amount</td>
-                                <td><span id="tr-net-amount"></span></td>
-                                <td></td>
-                            </tr>
+                        <tbody id="invoice-item-details">
                         </tbody>
                     </table>
                 </div>
                 <hr />
                 <div class="mb-3">
-                    <p>Memo : <span id="tr-description"></span></p>
+                    <p style="background-color:silver; font-size:16px; color:black;">Payment details</p>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Shipping Fee</td>
+                                <td><span id="invoice-shipping-fee"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Total Amount</td>
+                                <td><span id="invoice-total-amount"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="modal-footer" id="draft-status">
@@ -159,54 +183,49 @@
     </div>
 </div>
 <script>
-    function getTransactionDetail(transactionId) {
-        $.ajax({
-            url: '/PayPalExpressCheckout/GetTransactiondDetail',
-            type: "GET",
-            data: { transactionId: transactionId },
-            contentType: 'application/json; charset=utf-8',
-            success: function (data) {
-                var res = JSON.parse(data);
-                console.log(res);
-                var transaction_info = res.transaction_details[0].transaction_info;
-                $('#tr-transaction-updated-date').text(transaction_info.transaction_updated_date);
-                $('#tr-transaction-id').text(transaction_info.transaction_id);
-                $('#tr-top-gross-amount').text(transaction_info.transaction_amount.value + " " + transaction_info.transaction_amount.currency_code);
-                $('#tr-transaction-status').text(transaction_info.transaction_status);
-                $('#tr-gross-amount').text(transaction_info.transaction_amount.value + " " + transaction_info.transaction_amount.currency_code);
-                $('#tr-paypal-fee').text(transaction_info.fee_amount.value + " " + transaction_info.fee_amount.currency_code);
-                $('#tr-description').text(transaction_info.transaction_subject);
-                var netAmount = parseFloat(transaction_info.transaction_amount.value) + parseFloat(transaction_info.fee_amount.value);
-                $('#tr-net-amount').text(netAmount + " " + transaction_info.fee_amount.currency_code);
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        });
-    };
-
-    function refundTransaction() {
-        var transactionId = $('#tr-transaction-id').text();
-        console.log(transactionId);
-        $.ajax({
-            url: '/PayPalExpressCheckout/RefundTransaction',
-            type: "post",
-            data: { 'transactionId': transactionId },
-            success: function (data) {
-                var res = JSON.parse(data);
-                //console.log(data);
-                console.log(res);
-                if (json.status == 'COMPLETED') {
-                    window.alert('Refunded.');
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        });
-    }
 
     function getInvoiceDetail(invoice_id, invoice_status) {
+        $.ajax({
+            url: '/PayPalInvoice/GetInvoiceDetails',
+            type: "GET",
+            data: { invoiceId: invoice_id },
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
+            success: function (data) {
+                var res = JSON.parse(data);
+                console.log(res);
+                $('#invoice-date').text(res.invoice_date);
+                $('#invoice-id').text(res.id);
+                $('#invoice-billing-email').text(res.billing_info[0].email);
+                $('#invoice-gross-amount').text(res.total_amount.value + " " + res.total_amount.currency);
+                $('#invoice-status').text(res.status);
+                $('#invoice-name').text(res.shipping_info.first_name + " " + res.shipping_info.last_name);
+                $('#invoice-billing-address').text(res.shipping_info.address.line1);
+                $('#invoice-billing-city').text(res.shipping_info.address.city);
+                $('#invoice-billing-postal-code').text(res.shipping_info.address.postal_code);
+                $('#invoice-billing-country-code').text(res.shipping_info.address.country_code);
+                $('#invoice-billing-state').text(res.shipping_info.address.state);
+                for (var i=0; i<res.items.length; i++) {
+                    var $tr = "<tr><td><span>"+res.items[i].name+"</span></td>";
+                    $tr += "<td><span>"+res.items[i].quantity+"</span></td>";
+                    $tr += "<td><span>"+res.items[i].unit_price.value+" "+res.items[i].unit_price.currency+"</span></td></tr>";
+                    $("#invoice-item-details").append($tr);
+                }
+                $('#invoice-shipping-fee').text(res.shipping_cost.amount.value + " " + res.shipping_cost.amount.currency);
+                $('#invoice-total-amount').text(res.total_amount.value + " " + res.total_amount.currency);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
         if (invoice_status == "DRAFT") {
             $('#unpaid-status').css("display", "none");
             $('#paid-status').css("display", "none");

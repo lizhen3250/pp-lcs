@@ -26,6 +26,11 @@
     <link href="~/assets/css/loading.css" rel="stylesheet" />
     <script src="/vendors/jquery/dist/jquery.min.js"></script>
     <script>
+        $(window).bind('beforeunload', function () {
+            $('.load-container').show();
+            $('.body').css('display', 'none');
+        });
+
         $(function () {
             var hrefs = $("a");
             for (var i = 0; i < hrefs.length; ++i) {
