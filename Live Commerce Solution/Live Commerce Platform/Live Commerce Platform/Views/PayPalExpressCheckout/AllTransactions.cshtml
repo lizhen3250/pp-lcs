@@ -11,8 +11,12 @@
 </style>
 <script src="/vendors/jquery/dist/jquery.min.js"></script>
 <script>
+    var success;
     function modalClose() {
         $('#editModel').hide();
+        if (success) {
+            window.location.href = "/PayPalExpressCheckout/AllTransactions";
+        }
     }
 </script>
 <div class="content mt-3">
@@ -83,6 +87,8 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-success" style="display:none;"></div>
+                <div class="alert alert-warning" style="display:none;"></div>
                 <div class="mb-3">
                     <p id="tr-transaction-updated-date"></p>
                     <p>Transaction ID: <span id="tr-transaction-id"></span></p>
@@ -142,6 +148,8 @@
                 $('.load-container').hide();
                 $('.model-load-container').hide();
                 $('.modal-content').show();
+                $('.alert-warning').hide();
+                $('.alert-success').hide();
             },
             success: function (data) {
                 var res = JSON.parse(data);
@@ -181,10 +189,15 @@
             data: { 'transactionId': transactionId },
             success: function (data) {
                 var res = JSON.parse(data);
-                //console.log(data);
-                console.log(res);
-                if (json.status == 'COMPLETED') {
-                    window.alert('Refunded.');
+                if (res.status == 'COMPLETED') {
+                    success = true;
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Refunded");
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text("Already refunded");
                 }
             },
             error: function (err) {
