@@ -40,5 +40,13 @@ namespace Live_Commerce_Platform.Controllers
             var response = PayPalInvoice.GetInvoiceDetail(invoiceId);
             return response.Content;
         }
+
+        [HttpPost]
+        public string SendInvoice(string invoiceId)
+        {
+            PayPalClient.GetAccessToken();
+            var response = PayPalInvoice.SendInvoice(invoiceId);
+            return response.StatusCode.ToString();
+        }
     }
 }
