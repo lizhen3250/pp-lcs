@@ -49,22 +49,22 @@
             <div class="col-md-12">                
                 <div class="card">
                     <div class="card-header" style="height:70px;">
-                        <div class="navbar navbar-expand-sm bg-dark">
+                        <div class="navbar navbar-expand-sm bg-primary">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="all">ALL</a>
+                                    <button class="btn btn-primary" id="all">ALL</button>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="draft">DRAFT</a>
+                                    <button class="btn btn-primary" id="draft">DRAFT</button>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="unpaid">UNPAID</a>
+                                    <button class="btn btn-primary" href="#" id="unpaid">UNPAID</button>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="paid">PAID</a>
+                                    <button class="btn btn-primary" href="#" id="paid">PAID</button>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#" id="refunded">REFUNDED</a>
+                                    <button class="btn btn-primary" href="#" id="refunded">REFUNDED</button>
                                 </li>
                             </ul>
                         </div>
@@ -128,6 +128,8 @@
                     <p>Invoide Date: <b><span id="invoice-date"></span></b></p>
                     <p>Invoice ID: <b><span id="invoice-id"></span></b></p>
                     <p>Billing email: <b><span id="invoice-billing-email"></span></b></p>
+                    <p id="payment-date" style="display:none">Payment date: <b><span id="invoice-payment-date"></span></b></p>
+                    <p id="transaction-id" style="display:none">Transaction ID: <b><span id="invoice-transaction-id"></span></b></p>
                     <p>Gross amount: <b><span id="invoice-gross-amount"></span></b></p>
                     <p>Invoice status: <b><span id="invoice-status"></span></b></p>
                 </div>
@@ -181,8 +183,7 @@
                 <button type="button" class="btn btn-primary" onclick="cancelInvoice()">Cancel</button>
             </div>
             <div class="modal-footer" id="paid-status">
-                <button type="button" class="btn btn-primary">Remind</button>
-                <button type="button" class="btn btn-primary">Mark as Paid</button>
+                <button type="button" class="btn btn-primary" onclick="refundInvoice()">Refund</button>
             </div>
         </div>
 
@@ -226,6 +227,14 @@
                 }
                 $('#invoice-shipping-fee').text(res.shipping_cost.amount.value + " " + res.shipping_cost.amount.currency);
                 $('#invoice-total-amount').text(res.total_amount.value + " " + res.total_amount.currency);
+                $('#transaction-id').hide();
+                $('#payment-date').hide();
+                if (res.payments != null) {
+                    $('#transaction-id').show();
+                    $('#payment-date').show();
+                    $('#invoice-payment-date').text(res.payments[0].date);
+                    $('#invoice-transaction-id').text(res.payments[0].transaction_id);
+                }
             },
             error: function (err) {
                 console.log(err);
@@ -385,6 +394,43 @@
                     $('.alert-warning').show();
                     $('.alert-success').hide();
                     $('.alert-warning').text(data);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function refundInvoice() {
+        var transactionId = $('#invoice-transaction-id').text();
+        $.ajax({
+            url: '/PayPalExpressCheckout/RefundTransaction',
+            type: "POST",
+            data: JSON.stringify({
+                "transactionId": transactionId
+            }),
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
+            success: function (data) {
+                var res = JSON.parse(data);
+                if (res.status == 'COMPLETED') {
+                    success = true;
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Refunded");
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text("Already refunded");
                 }
             },
             error: function (err) {

@@ -31,6 +31,8 @@ namespace Live_Commerce_Platform.PayPalApi
         public RefundedAmount refunded_amount { get; set; }
 
         public Metadata metadata { get; set; }
+
+        public List<Payment> payments { get; set; }
     }
 
     public class TotalAmount
@@ -58,5 +60,12 @@ namespace Live_Commerce_Platform.PayPalApi
     public class Metadata
     {
         public string created_date { get; set; }
+        public string last_sent_date { get; set; }
+    }
+
+    public class Payment
+    {
+        public string transaction_id { get; set; }
+        public string date { get; set; }
     }
 }
