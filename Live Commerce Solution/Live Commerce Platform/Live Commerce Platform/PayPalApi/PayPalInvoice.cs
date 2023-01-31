@@ -64,5 +64,27 @@ namespace Live_Commerce_Platform.PayPalApi
             var response = client.Execute(request);
             return response;
         }
+
+        public static RestResponse RemindInvoice(string invoiceId)
+        {
+            var client = new RestClient(PayPalClient.endPoint + "v1/invoicing/invoices/" + invoiceId + "/remind");
+            var request = new RestRequest("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", PayPalClient.accessToken);
+            request.RequestFormat = DataFormat.Json;
+            var response = client.Execute(request);
+            return response;
+        }
+
+        public static RestResponse CancelInvoice(string invoiceId)
+        {
+            var client = new RestClient(PayPalClient.endPoint + "v1/invoicing/invoices/" + invoiceId + "/cancel");
+            var request = new RestRequest("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", PayPalClient.accessToken);
+            request.RequestFormat = DataFormat.Json;
+            var response = client.Execute(request);
+            return response;
+        }
     }
 }

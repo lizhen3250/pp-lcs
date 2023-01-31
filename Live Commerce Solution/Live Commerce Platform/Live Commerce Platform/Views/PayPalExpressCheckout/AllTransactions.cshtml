@@ -187,6 +187,17 @@
             url: '/PayPalExpressCheckout/RefundTransaction',
             type: "post",
             data: { 'transactionId': transactionId },
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+                $('.alert-warning').hide();
+                $('.alert-success').hide();
+            },
             success: function (data) {
                 var res = JSON.parse(data);
                 if (res.status == 'COMPLETED') {

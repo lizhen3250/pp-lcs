@@ -177,8 +177,8 @@
                 <button type="button" class="btn btn-primary" onclick="deleteInvoice()">Delete</button>
             </div>
             <div class="modal-footer" id="unpaid-status">
-                <button type="button" class="btn btn-primary">Remind</button>
-                <button type="button" class="btn btn-primary">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="remindInvoice()">Remind</button>
+                <button type="button" class="btn btn-primary" onclick="cancelInvoice()">Cancel</button>
             </div>
             <div class="modal-footer" id="paid-status">
                 <button type="button" class="btn btn-primary">Remind</button>
@@ -254,6 +254,15 @@
                 "invoiceId": invoiceId
             }),
             contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
             success: function (data) {
                 console.log(data);
                 if (data == 'Accepted') {
@@ -282,10 +291,100 @@
                 "invoiceId": invoiceId
             }),
             contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
             success: function (data) {
                 console.log(data);
                 if (data == 'NoContent') {
-                    window.location.href = "/PayPalInvoice/AllInvoices";
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Invoice has been deleted");
+                    success = true;
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text(data);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function remindInvoice() {
+        var invoiceId = $('#invoice-id').text();
+        $.ajax({
+            url: '/PayPalInvoice/RemindInvoice',
+            type: "POST",
+            data: JSON.stringify({
+                "invoiceId": invoiceId
+            }),
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
+            success: function (data) {
+                console.log(data);
+                if (data == 'Accepted') {
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Invoice has been reminded");
+                    success = true;
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text(data);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function cancelInvoice() {
+        var invoiceId = $('#invoice-id').text();
+        $.ajax({
+            url: '/PayPalInvoice/CancelInvoice',
+            type: "POST",
+            data: JSON.stringify({
+                "invoiceId": invoiceId
+            }),
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function () {
+                $('.load-container').hide();
+                $('.model-load-container').show();
+                $('.modal-content').hide();
+            }, complete: function (data) {
+                $('.load-container').hide();
+                $('.model-load-container').hide();
+                $('.modal-content').show();
+            },
+            success: function (data) {
+                console.log(data);
+                if (data == 'NoContent') {
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Invoice has been canceled");
+                    success = true;
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text(data);
                 }
             },
             error: function (err) {
