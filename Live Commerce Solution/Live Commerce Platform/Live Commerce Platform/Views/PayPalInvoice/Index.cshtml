@@ -116,13 +116,21 @@
                 var json = JSON.parse(res);
                 console.log(json);
                 if (json.status == 'DRAFT') {
-                    window.alert("Invoice Created!");
+                    $('.alert-success').show();
+                    $('.alert-warning').hide();
+                    $('.alert-success').text("Invoice has been created! Invoice ID is " + json.id);
+                } else {
+                    $('.alert-warning').show();
+                    $('.alert-success').hide();
+                    $('.alert-warning').text(json.message);
                 }
             }
         })
     }
 </script>
 <div class="container create-invoice">
+    <div class="alert alert-success" style="display:none;"><span id="alert-success"></span></div>
+    <div class="alert alert-warning" style="display:none;"><span id="alert-warning"></span></div>
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Create PayPal Invoicing</h1>

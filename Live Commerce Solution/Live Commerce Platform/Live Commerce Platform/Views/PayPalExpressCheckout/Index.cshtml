@@ -109,15 +109,19 @@
           success: function (res) {
               var json = JSON.parse(res);
               console.log(json);
-              var approve_url;
               if (json.status == 'CREATED') {
                   for (var i = 0; i < json.links.length; i++) {
                       if (json.links[i].rel == 'approve') {
                           approve_url = json.links[i].href;
-                          console.log(approve_url);
-                          $('#payment-url').text(approve_url);
+                          $('.alert-success').show();
+                          $('.alert-warning').hide();
+                          $('.alert-success').text(approve_url);
                       }
                   }
+              } else {
+                  $('.alert-warning').show();
+                  $('.alert-success').hide();
+                  $('.alert-warning').text(json.message);
               }
           }
        })
@@ -125,6 +129,8 @@
 
 </script>
 <div class="container create-payment-url">
+    <div class="alert alert-success" style="display:none;"><span id="alert-success"></span></div>
+    <div class="alert alert-warning" style="display:none;"><span id="alert-warning"></span></div>
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Create PayPal Express Checkout Payment URL</h1>

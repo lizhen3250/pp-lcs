@@ -48,5 +48,13 @@ namespace Live_Commerce_Platform.Controllers
             var response = PayPalInvoice.SendInvoice(invoiceId);
             return response.StatusCode.ToString();
         }
+
+        [HttpPost]
+        public string DeleteInvoice(string invoiceId)
+        {
+            PayPalClient.GetAccessToken();
+            var response = PayPalInvoice.DeleteInvoice(invoiceId);
+            return response.StatusCode.ToString();
+        }
     }
 }

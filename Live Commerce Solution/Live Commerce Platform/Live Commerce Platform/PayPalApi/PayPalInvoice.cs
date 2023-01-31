@@ -53,5 +53,16 @@ namespace Live_Commerce_Platform.PayPalApi
             var response = client.Execute(request);
             return response;
         }
+
+        public static RestResponse DeleteInvoice(string invoiceId)
+        {
+            var client = new RestClient(PayPalClient.endPoint + "v1/invoicing/invoices/" + invoiceId);
+            var request = new RestRequest("", Method.Delete);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", PayPalClient.accessToken);
+            request.RequestFormat = DataFormat.Json;
+            var response = client.Execute(request);
+            return response;
+        }
     }
 }

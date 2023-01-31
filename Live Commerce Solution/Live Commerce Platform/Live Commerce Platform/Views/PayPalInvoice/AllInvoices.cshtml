@@ -45,6 +45,7 @@
         <div class="row">
             <div class="col-md-12">                
                 <div class="card">
+                    <div class="alert alert-success" style="display:none;"></div>
                     <div class="card-header" style="height:70px;">
                         <div class="navbar navbar-expand-sm bg-dark">
                             <ul class="navbar-nav">
@@ -113,7 +114,6 @@
         </div>
         <div class="modal-content">
             <div class="modal-header">
-                <div class="alert alert-success" style="display:none;"></div>
                 <h5 class="modal-title" id="exampleModalLabel">Invoice details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" onclick="modalClose()">&times;</span>
@@ -170,7 +170,7 @@
             <div class="modal-footer" id="draft-status">
                 <button type="button" class="btn btn-primary" onclick="sendInvoice()">Send</button>
                 <button type="button" class="btn btn-primary">Update</button>
-                <button type="button" class="btn btn-primary">Delete</button>
+                <button type="button" class="btn btn-primary" onclick="deleteInvoice()">Delete</button>
             </div>
             <div class="modal-footer" id="unpaid-status">
                 <button type="button" class="btn btn-primary">Remind</button>
@@ -234,7 +234,7 @@
             $("#draft-status").css("display", "none");
             $('#unpaid-status').css("display", "none");
             $('#paid-status').css("display", "");
-        } else if (invoice_status == "UNPAID") {
+        } else if (invoice_status == "SENT") {
             $("#draft-status").css("display", "none");
             $('#unpaid-status').css("display", "");
             $('#paid-status').css("display", "none");
@@ -243,7 +243,6 @@
 
     function sendInvoice() {
         var invoiceId = $('#invoice-id').text();
-        console.log(invoiceId);
         $.ajax({
             url: '/PayPalInvoice/SendInvoice',
             type: "POST",
@@ -254,6 +253,27 @@
             success: function (data) {
                 console.log(data);
                 if (data == 'Accepted') {
+                    window.location.href = "/PayPalInvoice/AllInvoices";
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function deleteInvoice() {
+        var invoiceId = $('#invoice-id').text();
+        $.ajax({
+            url: '/PayPalInvoice/DeleteInvoice',
+            type: "POST",
+            data: JSON.stringify({
+                "invoiceId": invoiceId
+            }),
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                console.log(data);
+                if (data == 'NoContent') {
                     window.location.href = "/PayPalInvoice/AllInvoices";
                 }
             },
