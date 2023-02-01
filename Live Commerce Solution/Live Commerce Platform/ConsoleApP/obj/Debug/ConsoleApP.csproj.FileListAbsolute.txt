@@ -28,3 +28,33 @@ C:\Users\Dell\Desktop\Live Commerce Solution\Live Commerce Platform\ConsoleApP\o
 C:\Users\Dell\Desktop\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.pdb
 C:\Users\Dell\Desktop\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Dell\Desktop\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Newtonsoft.Json.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\ConsoleApP.exe.config
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\ConsoleApP.exe
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\ConsoleApP.pdb
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Newtonsoft.Json.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\RestSharp.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Buffers.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Memory.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Text.Encodings.Web.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Text.Json.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.ValueTuple.dll
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\Newtonsoft.Json.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\RestSharp.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Buffers.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Memory.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Text.Encodings.Web.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Text.Json.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\bin\Debug\System.ValueTuple.xml
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.csprojAssemblyReference.cache
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.csproj.CoreCompileInputs.cache
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.csproj.CopyComplete
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.exe
+C:\Users\zhenli3\Desktop\Live Commerce Solution\pp-lcs\Live Commerce Solution\Live Commerce Platform\ConsoleApP\obj\Debug\ConsoleApP.pdb

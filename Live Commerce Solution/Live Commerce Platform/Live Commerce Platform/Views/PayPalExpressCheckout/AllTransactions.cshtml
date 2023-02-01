@@ -49,7 +49,7 @@
                                     <td>@transactionDetail.transaction_info.transaction_id</td>
                                     <td>@transactionDetail.transaction_info.invoice_id</td>
                                     <td>@transactionDetail.transaction_info.transaction_amount.value</td>
-                                    @if (transactionDetail.transaction_info.transaction_event_code == "T0006")
+                                    @if (transactionDetail.transaction_info.transaction_event_code == "T0006" || transactionDetail.transaction_info.transaction_event_code == "T0007")
                                     {
                                         <td style="color:cornflowerblue">Completed</td>
                                     }
